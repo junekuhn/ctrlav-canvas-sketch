@@ -1,0 +1,26 @@
+{
+  "name": "ctrlav-canvas-sketch",
+  "version": "1.0.0",
+  "description": "making stuff using canvas sketch for ctrlav",
+  "main": "logo.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/justinkuhn/ctrlav-canvas-sketch.git"
+  },
+  "author": "Justin Kuhn",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/justinkuhn/ctrlav-canvas-sketch/issues"
+  },
+  "homepage": "https://github.com/justinkuhn/ctrlav-canvas-sketch#readme",
+  "dependencies": {
+    "canvas-sketch": "^0.7.4",
+    "glsl-aastep": "^1.0.1",
+    "glsl-noise": "0.0.0",
+    "glslify": "^7.1.1",
+    "three": "^0.125.2"
+  }
+}
