@@ -1,8 +1,27 @@
+
+/*
+todo
+
+Three Group 
+mesh
+coloring
+fonts
+buffer geometry
+custom shading
+
+https://github.com/mrdoob/three.js/blob/master/examples/webgl_geometry_text_stroke.html
+
+*/
+
+
+
 // Ensure ThreeJS is in global scope for the 'examples/'
 global.THREE = require("three");
 
 // Include any additional ThreeJS examples below
 require("three/examples/js/controls/OrbitControls");
+require("three/examples/js/loaders/SVGLoader.js");
+
 
 const canvasSketch = require("canvas-sketch");
 
@@ -26,7 +45,7 @@ const sketch = ({ context }) => {
   });
 
   // WebGL background color
-  renderer.setClearColor("#000", 1);
+  renderer.setClearColor("#fff", 1);
 
   // Setup a camera
   const camera = new THREE.PerspectiveCamera(50, 1, 0.01, 100);
@@ -38,6 +57,86 @@ const sketch = ({ context }) => {
 
   // Setup your scene
   const scene = new THREE.Scene();
+
+  //font
+  const fontLoader = new THREE.FontLoader();
+  fontLoader.load('coolvetica.json', (font) => {
+      const color = new THREE.Color( 0x000000 );
+
+      const matDark = new THREE.MeshBasicMaterial( {
+         color: color,
+         side: THREE.DoubleSide
+      } );
+
+      const matLite = new THREE.MeshBasicMaterial( {
+         color: color,
+         transparent: true,
+         opacity: 0.4,
+         side: THREE.DoubleSide
+      } );
+
+      const message = "ctrlAV";
+
+      const shapes = font.generateShapes( message, 1 );
+
+      const geometry = new THREE.ShapeGeometry( shapes );
+
+      geometry.computeBoundingBox();
+
+      const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
+
+      geometry.translate( xMid, 0, 0 );
+
+      // make shape ( N.B. edge view not visible )
+
+      const text = new THREE.Mesh( geometry, matLite );
+      text.position.z = - 150;
+      scene.add( text );
+
+      // make line shape ( N.B. edge view remains visible )
+
+      const holeShapes = [];
+
+      for ( let i = 0; i < shapes.length; i ++ ) {
+
+         const shape = shapes[ i ];
+
+         if ( shape.holes && shape.holes.length > 0 ) {
+
+            for ( let j = 0; j < shape.holes.length; j ++ ) {
+
+               const hole = shape.holes[ j ];
+               holeShapes.push( hole );
+
+            }
+
+         }
+
+      }
+
+      shapes.push.apply( shapes, holeShapes );
+
+      const style = THREE.SVGLoader.getStrokeStyle( 0.05, color.getStyle() );
+
+      const strokeText = new THREE.Group();
+
+      for ( let i = 0; i < shapes.length; i ++ ) {
+
+         const shape = shapes[ i ];
+
+         const points = shape.getPoints();
+
+         const geometry = THREE.SVGLoader.pointsToStroke( points, style );
+
+         geometry.translate( xMid, 0, 0 );
+
+         const strokeMesh = new THREE.Mesh( geometry, matDark );
+         strokeText.add( strokeMesh );
+
+      }
+
+      scene.add( strokeText );
+  });
 
   // Setup a geometry
   const geometry = new THREE.BoxGeometry(2,2,2);
@@ -81,7 +180,7 @@ const sketch = ({ context }) => {
 
   // Setup a mesh with geometry + material
   const mesh = new THREE.Mesh(geometry, material);
-  scene.add(mesh);
+  //scene.add(mesh);
 
   // draw each frame
   return {
